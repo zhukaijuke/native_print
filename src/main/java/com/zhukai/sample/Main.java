@@ -1,6 +1,7 @@
 package com.zhukai.sample;
 
 import com.sun.istack.internal.NotNull;
+import com.zhukai.util.AlertUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +18,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(resource);
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
