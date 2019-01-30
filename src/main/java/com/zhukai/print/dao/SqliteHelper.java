@@ -1,17 +1,13 @@
-package com.zhukai.dao;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+package com.zhukai.print.dao;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * sqliteå¸®åŠ©ç±»ï¼Œç›´æ¥åˆ›å»ºè¯¥ç±»å®ä¾‹ï¼Œå¹¶è°ƒç”¨ç›¸åº”çš„æ¥å£å³å¯å¯¹sqliteæ•°æ®åº“è¿›è¡Œæ“ä½œ
+ * sqlite°ïÖúÀà£¬Ö±½Ó´´½¨¸ÃÀàÊµÀı£¬²¢µ÷ÓÃÏàÓ¦µÄ½Ó¿Ú¼´¿É¶ÔsqliteÊı¾İ¿â½øĞĞ²Ù×÷
  */
 @Slf4j
 public class SqliteHelper {
@@ -22,77 +18,85 @@ public class SqliteHelper {
     private String dbFilePath;
 
     /**
-     * æ„é€ å‡½æ•°
+     * ¹¹Ôìº¯Êı
      *
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public SqliteHelper() throws ClassNotFoundException, SQLException {
+    public SqliteHelper() {
         this("db/print.db");
     }
 
     /**
-     * æ„é€ å‡½æ•°
+     * ¹¹Ôìº¯Êı
      *
-     * @param dbFilePath sqlite db æ–‡ä»¶è·¯å¾„
+     * @param dbFilePath sqlite db ÎÄ¼şÂ·¾¶
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public SqliteHelper(String dbFilePath) throws ClassNotFoundException, SQLException {
+    public SqliteHelper(String dbFilePath) {
         this.dbFilePath = dbFilePath;
         connection = getConnection(dbFilePath);
     }
 
     /**
-     * è·å–æ•°æ®åº“è¿æ¥
+     * »ñÈ¡Êı¾İ¿âÁ¬½Ó
      *
-     * @param dbFilePath dbæ–‡ä»¶è·¯å¾„
-     * @return æ•°æ®åº“è¿æ¥
+     * @param dbFilePath dbÎÄ¼şÂ·¾¶
+     * @return Êı¾İ¿âÁ¬½Ó
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public Connection getConnection(String dbFilePath) throws ClassNotFoundException, SQLException {
+    public Connection getConnection(String dbFilePath) {
         Connection conn = null;
-        Class.forName("org.sqlite.JDBC");
-        conn = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
+        try {
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:" + dbFilePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return conn;
     }
 
     /**
-     * æ‰§è¡ŒsqlæŸ¥è¯¢
+     * Ö´ĞĞsql²éÑ¯
      *
-     * @param sql sql select è¯­å¥
-     * @param rse ç»“æœé›†å¤„ç†ç±»å¯¹è±¡
-     * @return æŸ¥è¯¢ç»“æœ
+     * @param sql sql select Óï¾ä
+     * @param rse ½á¹û¼¯´¦ÀíÀà¶ÔÏó
+     * @return ²éÑ¯½á¹û
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public <T> T executeQuery(String sql, ResultSetExtractor<T> rse) throws SQLException, ClassNotFoundException {
+    public <T> T executeQuery(String sql, ResultSetExtractor<T> rse) {
         try {
             resultSet = getStatement().executeQuery(sql);
             T rs = rse.extractData(resultSet);
             return rs;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             destroyed();
         }
     }
 
     /**
-     * æ‰§è¡ŒselectæŸ¥è¯¢ï¼Œè¿”å›ç»“æœåˆ—è¡¨
+     * Ö´ĞĞselect²éÑ¯£¬·µ»Ø½á¹ûÁĞ±í
      *
-     * @param sql sql select è¯­å¥
-     * @param rm  ç»“æœé›†çš„è¡Œæ•°æ®å¤„ç†ç±»å¯¹è±¡
+     * @param sql sql select Óï¾ä
+     * @param rm  ½á¹û¼¯µÄĞĞÊı¾İ´¦ÀíÀà¶ÔÏó
      * @return
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public <T> List<T> executeQuery(String sql, RowMapper<T> rm) throws SQLException, ClassNotFoundException {
+    public <T> List<T> executeQuery(String sql, RowMapper<T> rm) {
         List<T> rsList = new ArrayList<T>();
         try {
             resultSet = getStatement().executeQuery(sql);
             while (resultSet.next()) {
                 rsList.add(rm.mapRow(resultSet, resultSet.getRow()));
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             destroyed();
         }
@@ -100,17 +104,19 @@ public class SqliteHelper {
     }
 
     /**
-     * æ‰§è¡Œæ•°æ®åº“æ›´æ–°sqlè¯­å¥
+     * Ö´ĞĞÊı¾İ¿â¸üĞÂsqlÓï¾ä
      *
      * @param sql
-     * @return æ›´æ–°è¡Œæ•°
+     * @return ¸üĞÂĞĞÊı
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public int executeUpdate(String sql) throws SQLException, ClassNotFoundException {
+    public int executeUpdate(String sql) {
         try {
             int c = getStatement().executeUpdate(sql);
             return c;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             destroyed();
         }
@@ -118,55 +124,67 @@ public class SqliteHelper {
     }
 
     /**
-     * æ‰§è¡Œå¤šä¸ªsqlæ›´æ–°è¯­å¥
+     * Ö´ĞĞ¶à¸ösql¸üĞÂÓï¾ä
      *
      * @param sqls
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void executeUpdate(String... sqls) throws SQLException, ClassNotFoundException {
+    public void executeUpdate(String... sqls) {
         try {
-            for (String sql : sqls) {
-                getStatement().executeUpdate(sql);
+            if (sqls != null) {
+                for (String sql : sqls) {
+                    getStatement().executeUpdate(sql);
+                }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             destroyed();
         }
     }
 
     /**
-     * æ‰§è¡Œæ•°æ®åº“æ›´æ–° sql List
+     * Ö´ĞĞÊı¾İ¿â¸üĞÂ sql List
      *
-     * @param sqls sqlåˆ—è¡¨
+     * @param sqls sqlÁĞ±í
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public void executeUpdate(List<String> sqls) throws SQLException, ClassNotFoundException {
+    public void executeUpdate(List<String> sqls) {
         try {
-            for (String sql : sqls) {
-                getStatement().executeUpdate(sql);
+            if (sqls != null) {
+                for (String sql : sqls) {
+                    getStatement().executeUpdate(sql);
+                }
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             destroyed();
         }
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
+    private Connection getConnection() {
         if (null == connection) {
             connection = getConnection(dbFilePath);
         }
         return connection;
     }
 
-    private Statement getStatement() throws SQLException, ClassNotFoundException {
+    private Statement getStatement() {
         if (null == statement) {
-            statement = getConnection().createStatement();
+            try {
+                statement = getConnection().createStatement();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
         return statement;
     }
 
     /**
-     * æ•°æ®åº“èµ„æºå…³é—­å’Œé‡Šæ”¾
+     * Êı¾İ¿â×ÊÔ´¹Ø±ÕºÍÊÍ·Å
      */
     public void destroyed() {
         try {
@@ -185,7 +203,7 @@ public class SqliteHelper {
                 resultSet = null;
             }
         } catch (SQLException e) {
-            log.error("Sqliteæ•°æ®åº“å…³é—­æ—¶å¼‚å¸¸", e);
+            log.error("SqliteÊı¾İ¿â¹Ø±ÕÊ±Òì³£", e);
         }
     }
 }

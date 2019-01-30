@@ -1,6 +1,7 @@
-package com.zhukai.dao;
+package com.zhukai.print.dao;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * @author zhukai
@@ -9,6 +10,6 @@ import java.sql.ResultSet;
 @FunctionalInterface
 public interface ResultSetExtractor<T> {
 
-    T extractData(ResultSet rs);
+    T extractData(ResultSet rs) throws SQLException;
 
 }
