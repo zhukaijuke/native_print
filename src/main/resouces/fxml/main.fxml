@@ -29,7 +29,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="reloadPrintBtn" layoutX="316.0" layoutY="470.0" mnemonicParsing="false" onAction="#reloadPrint" prefHeight="31.0" prefWidth="150.0" text="重新加载打印机列表">
+                  <Button fx:id="reloadPrintBtn" layoutX="320.0" layoutY="470.0" mnemonicParsing="false" onAction="#reloadPrint" prefHeight="31.0" prefWidth="150.0" text="重新加载打印机列表">
                      <styleClass>
                         <String fx:value="btn-success" />
                         <String fx:value="btn" />
@@ -41,7 +41,7 @@
                   <CheckBox fx:id="showPageDialogCheckBox" layoutX="166.0" layoutY="240.0" mnemonicParsing="false" />
                   <CheckBox fx:id="showPrintDialogCheckBox" layoutX="166.0" layoutY="275.0" mnemonicParsing="false" />
                   <CheckBox fx:id="showPerviewDialogCheckBox" layoutX="166.0" layoutY="310.0" mnemonicParsing="false" />
-                  <Button fx:id="rePrintBtn" layoutX="150.0" layoutY="470.0" mnemonicParsing="false" onAction="#rePrint" prefHeight="31.0" prefWidth="150.0" text="重打上一次请求单据">
+                  <Button fx:id="rePrintBtn" layoutX="155.0" layoutY="470.0" mnemonicParsing="false" onAction="#rePrint" prefHeight="31.0" prefWidth="150.0" text="重打上一次请求单据">
                      <styleClass>
                         <String fx:value="btn-success" />
                         <String fx:value="btn" />
@@ -91,8 +91,8 @@
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="509.0" prefWidth="600.0">
                <children>
-                  <TextArea fx:id="logArea" editable="false" prefHeight="459.0" prefWidth="480.0" />
-                  <Button fx:id="clearLogBtn" layoutX="388.0" layoutY="470.0" mnemonicParsing="false" onAction="#clearLog" text="清空日志">
+                  <TextArea fx:id="logArea" editable="false" prefHeight="460.0" />
+                  <Button fx:id="clearLogBtn" layoutX="400.0" layoutY="470.0" mnemonicParsing="false" onAction="#clearLog" prefHeight="31.0" text="清空日志">
                      <styleClass>
                         <String fx:value="btn-success" />
                         <String fx:value="btn" />

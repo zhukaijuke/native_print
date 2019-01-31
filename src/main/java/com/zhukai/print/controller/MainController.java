@@ -59,8 +59,6 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // 重定向System.out输出到logArea控件中
-        this.setSystemOut();
 
         // 获取打印机列表
         PrintService[] printers = PrinterJob.lookupPrintServices();
@@ -70,7 +68,6 @@ public class MainController implements Initializable {
         printNameColumn.setCellValueFactory(new PropertyValueFactory<>("printerName")); // 映射
         List<PrinterDTO> printerDTOList = this.getPrinterDTOList(printers);
         printerTableView.setItems(FXCollections.observableArrayList(printerDTOList));
-        log.info("获取打印机成功!");
 
         // 绑定打印机下拉框数据
         List<String> printStrList = printerDTOList.stream().map(PrinterDTO::getPrinterName).collect(Collectors.toList());
@@ -101,6 +98,9 @@ public class MainController implements Initializable {
         showPrintDialogCheckBox.selectedProperty().addListener(new MyChangeListener<>(Contants.SHOW_PRINT_DIALOG));
         showPerviewDialogCheckBox.selectedProperty().addListener(new MyChangeListener<>(Contants.SHOW_PERVIEW_DIALOG));
 
+        // 重定向System.out输出到logArea控件中
+        this.setSystemOut();
+        log.info("获取打印机成功!");
         log.info("初始化绑定数据成功!");
     }
 
