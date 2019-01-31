@@ -25,6 +25,7 @@ public class Main extends Application {
     private int httpPort = 8086;
 
     private String title = "打印辅助程序";
+    private String icon = "/icon/print.png";
 
     private TrayIcon trayIcon;
 
@@ -40,7 +41,7 @@ public class Main extends Application {
         // 不能改变窗体大小
         primaryStage.setResizable(false);
         // 设置图标G
-        primaryStage.getIcons().add(new Image("/icon/print.jpg"));
+        primaryStage.getIcons().add(new Image(icon));
         // 关闭时监听事件
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
@@ -125,7 +126,7 @@ public class Main extends Application {
 
         try {
             SystemTray tray = SystemTray.getSystemTray();
-            BufferedImage image = ImageIO.read(Main.class.getResourceAsStream("/icon/print.jpg"));
+            BufferedImage image = ImageIO.read(Main.class.getResourceAsStream(icon));
             trayIcon = new TrayIcon(image, title, popupMenu);
             trayIcon.setToolTip(title);
             tray.add(trayIcon);

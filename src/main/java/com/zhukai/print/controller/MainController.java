@@ -4,7 +4,9 @@ import com.zhukai.print.dao.CommonDao;
 import com.zhukai.print.listener.MyChangeListener;
 import com.zhukai.print.model.Contants;
 import com.zhukai.print.model.PrinterDTO;
-import com.zhukai.print.util.StringUtils;
+import com.zhukai.print.model.RequestModel;
+import com.zhukai.print.netty.ServerHandler;
+import com.zhukai.print.util.AlertUtil;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -12,7 +14,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 
 import javax.print.PrintService;
 import java.awt.print.PrinterJob;
@@ -25,6 +29,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class MainController implements Initializable {
 
     @FXML
@@ -54,23 +59,10 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 重定向System.out输出到logArea控件中
+        this.setSystemOut();
 
-        System.setOut(new PrintStream(new OutputStream() {
-            @Override
-            public void write(int b) {
-                String text = String.valueOf((char) b);
-                Platform.runLater(() -> {
-                    logArea.appendText(text);
-                });
-            }
-
-            @Override
-            public void write(byte[] b, int off, int len) {
-                String s = new String(b, off, len);
-                Platform. runLater(() -> logArea.appendText(s));
-            }
-        }, true));
-
+        // 获取打印机列表
         PrintService[] printers = PrinterJob.lookupPrintServices();
 
         // 绑定打印机列表数据
@@ -78,6 +70,7 @@ public class MainController implements Initializable {
         printNameColumn.setCellValueFactory(new PropertyValueFactory<>("printerName")); // 映射
         List<PrinterDTO> printerDTOList = this.getPrinterDTOList(printers);
         printerTableView.setItems(FXCollections.observableArrayList(printerDTOList));
+        log.info("获取打印机成功!");
 
         // 绑定打印机下拉框数据
         List<String> printStrList = printerDTOList.stream().map(PrinterDTO::getPrinterName).collect(Collectors.toList());
@@ -108,9 +101,40 @@ public class MainController implements Initializable {
         showPrintDialogCheckBox.selectedProperty().addListener(new MyChangeListener<>(Contants.SHOW_PRINT_DIALOG));
         showPerviewDialogCheckBox.selectedProperty().addListener(new MyChangeListener<>(Contants.SHOW_PERVIEW_DIALOG));
 
-        logArea.appendText("zhukai\n");
-        logArea.appendText("系统启动成功!\n");
-        System.out.println("asdasdasd");
+        log.info("初始化绑定数据成功!");
+    }
+
+    /**
+     * 重定向System.out输出到logArea控件中
+     */
+    private void setSystemOut() {
+        PrintStream printStream = new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) {
+                String text = String.valueOf((char) b);
+                Platform.runLater(() -> {
+                    int length = logArea.getLength();
+                    if (length > 10000) {
+                        logArea.deleteText(0, length / 4);
+                    }
+                    logArea.appendText(text);
+                });
+            }
+
+            @Override
+            public void write(byte[] b, int off, int len) {
+                String text = new String(b, off, len);
+                Platform.runLater(() -> {
+                    int length = logArea.getLength();
+                    if (length > 10000) {
+                        logArea.deleteText(0, length / 4);
+                    }
+                    logArea.appendText(text);
+                });
+            }
+        }, true);
+        System.setOut(printStream);
+        System.setErr(printStream);
     }
 
     private List<PrinterDTO> getPrinterDTOList(PrintService[] printers) {
@@ -183,15 +207,29 @@ public class MainController implements Initializable {
         }
     }
 
-    int i = 0;
-    public void appTxt() {
-        logArea.appendText("zhukai\n");
-        logArea.appendText("系统启动成功!" + (i++) + "\n");
-        System.out.println("asdasdasd");
+    /**
+     * 清空日志
+     */
+    public void clearLog(ActionEvent event) {
+        Platform.runLater(() -> logArea.setText(""));
     }
 
-    public void delTxt() {
-        logArea.deleteText(IndexRange.normalize(0, 10));
+    /**
+     * 重打上一次请求的单据
+     */
+    public void rePrint(ActionEvent event) {
+        RequestModel lastReq = CommonDao.getLastPrintLog();
+        if (lastReq == null) {
+            String msg = "没有查询到上次的打印记录!";
+            log.error(msg);
+            Platform.runLater(() -> AlertUtil.error(msg));
+            return;
+        }
+        try {
+            ServerHandler.printByUrl(lastReq);
+        } catch (Exception e) {
+            log.error("打印失败!", e);
+        }
     }
 
 }

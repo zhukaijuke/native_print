@@ -29,7 +29,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="reloadPrintBtn" layoutX="293.0" layoutY="466.0" mnemonicParsing="false" onAction="#reloadPrint" prefHeight="31.0" prefWidth="163.0" text="重新加载打印机列表">
+                  <Button fx:id="reloadPrintBtn" layoutX="316.0" layoutY="470.0" mnemonicParsing="false" onAction="#reloadPrint" prefHeight="31.0" prefWidth="150.0" text="重新加载打印机列表">
                      <styleClass>
                         <String fx:value="btn-success" />
                         <String fx:value="btn" />
@@ -41,6 +41,12 @@
                   <CheckBox fx:id="showPageDialogCheckBox" layoutX="166.0" layoutY="240.0" mnemonicParsing="false" />
                   <CheckBox fx:id="showPrintDialogCheckBox" layoutX="166.0" layoutY="275.0" mnemonicParsing="false" />
                   <CheckBox fx:id="showPerviewDialogCheckBox" layoutX="166.0" layoutY="310.0" mnemonicParsing="false" />
+                  <Button fx:id="rePrintBtn" layoutX="150.0" layoutY="470.0" mnemonicParsing="false" onAction="#rePrint" prefHeight="31.0" prefWidth="150.0" text="重打上一次请求单据">
+                     <styleClass>
+                        <String fx:value="btn-success" />
+                        <String fx:value="btn" />
+                     </styleClass>
+                  </Button>
                     </children>
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
@@ -86,15 +92,9 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="509.0" prefWidth="600.0">
                <children>
                   <TextArea fx:id="logArea" editable="false" prefHeight="459.0" prefWidth="480.0" />
-                  <Button fx:id="appTxtBtn" layoutX="400.0" layoutY="468.0" mnemonicParsing="false" onAction="#appTxt" text="append">
+                  <Button fx:id="clearLogBtn" layoutX="388.0" layoutY="470.0" mnemonicParsing="false" onAction="#clearLog" text="清空日志">
                      <styleClass>
                         <String fx:value="btn-success" />
-                        <String fx:value="btn" />
-                     </styleClass>
-                  </Button>
-                  <Button fx:id="delTxtBtn" layoutX="315.0" layoutY="469.0" mnemonicParsing="false" onAction="#delTxt" text="delete">
-                     <styleClass>
-                        <String fx:value="btn-default" />
                         <String fx:value="btn" />
                      </styleClass>
                   </Button>
@@ -103,7 +103,17 @@
         </Tab>
         <Tab text="系统帮助">
             <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="14.0" layoutY="14.0" prefHeight="19.0" prefWidth="83.0" style="-fx-font-size: 14px;" text="帮助信息:" />
+                  <Label layoutX="40.0" layoutY="40.0" prefHeight="20.0" prefWidth="392.0" style="-fx-font-size: 14px;" text="1. 服务地址：http://localhost:8086/" wrapText="true" />
+                  <Label layoutX="40.0" layoutY="65.0" prefHeight="20.0" prefWidth="244.0" style="-fx-font-size: 14px;" text="2. 本软件提供HTTP POST打印服务。" />
+                  <Label layoutX="40.0" layoutY="90.0" prefHeight="20.0" prefWidth="424.0" style="-fx-font-size: 14px;" text="3. 打印模板采用Jasperreport编写。" wrapText="true" />
+                  <Label layoutX="14.0" layoutY="154.0" prefHeight="19.0" prefWidth="83.0" style="-fx-font-size: 14px;" text="打印流程:" />
+                  <Label layoutX="40.0" layoutY="180.0" prefHeight="20.0" prefWidth="392.0" style="-fx-font-size: 14px;" text="1. 网页端发送POST请求到此程序。" wrapText="true" />
+                  <Label layoutX="40.0" layoutY="205.0" prefHeight="20.0" prefWidth="392.0" style="-fx-font-size: 14px;" text="2. 此程序再通过URL参数请求获取远程模板数据。" wrapText="true" />
+                  <Label layoutX="40.0" layoutY="230.0" prefHeight="20.0" prefWidth="392.0" style="-fx-font-size: 14px;" text="3. 寻找设置好的默认打印机自动打印数据。" wrapText="true" />
+               </children></AnchorPane>
             </content>
         </Tab>
     </tabs>
