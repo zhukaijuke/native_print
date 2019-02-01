@@ -6,7 +6,7 @@
     <groupId>com.zhukai</groupId>
     <artifactId>native_print</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>native_print</name>
 
     <properties>
@@ -111,6 +111,7 @@
         <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
@@ -121,7 +122,6 @@
             </plugin>
             <!-- resource插件 -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
                 <configuration>
@@ -149,10 +149,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <!-- JavaFX-Maven 插件 -->
+            <plugin>
+                <groupId>com.zenjava</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>8.8.3</version>
+                <configuration>
+                    <mainClass>com.zhukai.print.Main</mainClass>
+                    <vendor>zhukai</vendor>
+                    <!--<bundler>EXE</bundler>-->
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -2,6 +2,7 @@ package com.zhukai.print;
 
 import com.zhukai.print.netty.HttpServer;
 import com.zhukai.print.netty.ServerHandler;
+import com.zhukai.print.util.DbConfigUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -12,11 +13,15 @@ import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URL;
 
 @Slf4j
@@ -30,6 +35,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // 创建DB
+        DbConfigUtil.createEmptyFiles();
         // 最小化托盘
         this.enableTray(primaryStage);
 
@@ -63,7 +70,25 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        launch(args);
+        try {
+            launch(args);
+        } catch (Exception e) {
+            // 如启动错误, 弹框提示错误, 并记录错误日志到文件方便排查问题
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            try {
+                File file = new File("E:/print_start.log");
+                if (!file.exists()) {
+                    boolean flag = file.createNewFile();
+                }
+                PrintWriter pw = new PrintWriter(file);
+                e.printStackTrace(pw);
+                pw.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            System.exit(1);
+        }
+
     }
 
 
